@@ -1,0 +1,19 @@
+# Dependencias instaladas con NPM
+/node_modules
+
+# Archivos generados por el compilador de TypeScript
+/dist
+
+# Archivos de registro
+*.log
+
+# Archivos de entorno
+.env
+
+# Archivos de configuración de IDEs
+/.idea
+.vscode
+
+# Otros archivos generados
+.DS_Store
+Thumbs.db
