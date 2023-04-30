@@ -1,9 +1,11 @@
 import express from "express";
 import morgan from 'morgan';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import router from "./src/router";
 
 const app = express();
+dotenv.config();
 
 // Configuración de rutas
 app.use(cors());

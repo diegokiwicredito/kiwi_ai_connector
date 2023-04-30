@@ -11,7 +11,7 @@ router.get('/', async (req: any, res: any) => {
 });
 
 router.post('/trengo/webhook', async (req: any, res: any) => {
-    console.log(req.body);
+    console.log("body", req.body);
     const { message_id, ticket_id, contact_id, message, contact_name, contact_identifier } = req.body;
 
     const payload = await init({

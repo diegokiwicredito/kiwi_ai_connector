@@ -2,9 +2,10 @@ import axios from "axios";
 
 export class Trengo {
     // Método para enviar mensajes
-    public static async sendMessage ({ ticket_id, contact_identifier, message }: any) {
+    public static async sendMessage ({ ticket_id, message }: any) {
         const apiUrl = `https://app.trengo.com/api/v2/tickets/${ticket_id}/messages`;
         const apiKey = process.env.TRENGO_API_KEY;
+        console.log(process.env.TRENGO_API_KEY)
     
         try {
             const response = await axios({
