@@ -26,6 +26,7 @@ model message {
   content    String
   sentiment  String
   category   String
+  type       String?
   created_at DateTime @default(now())
 
   conversation_id String

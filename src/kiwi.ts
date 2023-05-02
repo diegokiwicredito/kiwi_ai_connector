@@ -7,6 +7,7 @@ interface CreateMessage {
     content: string
     category: string
     sentiment: string
+    type: string
 }
 
 export class Kiwi {
@@ -37,14 +38,15 @@ export class Kiwi {
         }
     }
 
-    public static async createMessage({ conversation_id, content, category, sentiment }: CreateMessage) {
+    public static async createMessage({ conversation_id, content, category, sentiment, type }: CreateMessage) {
         try {
             const message = await prisma.message.create({
                 data: {
                     conversation_id,
                     content,
                     category,
-                    sentiment
+                    sentiment,
+                    type
                 }
             })
             return message;
