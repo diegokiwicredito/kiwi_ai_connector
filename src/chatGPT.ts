@@ -109,7 +109,7 @@ export class ChatGPT {
             const prompt = `
                 A partir del siguiente JSON de datos:
                 ${JSON.stringify(loan)}
-                Responde la siguiente pregunta: ${question}
+                Responde la siguiente pregunta: ${question} y omitir la fuente de los datos en la respuesta
             `;
             const response = await openai.createCompletion({
                 model: "text-davinci-003",

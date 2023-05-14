@@ -112,13 +112,13 @@ export class LoanProServices {
             const loanType = portfolioId === 12 ? "credit_builder" : "normal"
 
             return {
-                id,
-                loanpro_user_id: customerId,
+                // id,
+                // loanpro_user_id: customerId,
                 loanType,
                 amountDue,
                 apr: parseFloat(apr),
                 balance: parseFloat(payoff),
-                date: new Date(getDateInSecond(contractDate) * 1000),
+                creationDate: new Date(getDateInSecond(contractDate) * 1000),
                 interestRate: parseFloat(loanRate),
                 monthlyPayment: parseFloat(payment),
                 paymentFrequency: paymentFrequency.replace('loan.frequency.', ''),
