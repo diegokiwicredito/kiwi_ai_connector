@@ -68,7 +68,7 @@ export class ChatGPT {
             });
 
             const chain = new SqlDatabaseChain({
-                llm: new OpenAI({ openAIApiKey: "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", temperature: 0 }),
+                llm: new OpenAI({ temperature: 0 }),
                 database: db,
             });
 
