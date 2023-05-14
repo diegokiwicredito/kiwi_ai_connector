@@ -3,6 +3,8 @@ import { DataSource } from "typeorm";
 import { OpenAI } from "langchain/llms/openai";
 import { SqlDatabase } from "langchain/sql_db";
 import { SqlDatabaseChain } from "langchain/chains";
+import { ChatOpenAI } from "langchain/chat_models/openai";
+import { initializeAgentExecutorWithOptions } from "langchain/agents";
 
 export class ChatGPT {
     // Método para enviar mensajes
@@ -73,6 +75,22 @@ export class ChatGPT {
             });
 
             const response = await chain.run(message);
+
+            if (response.includes("No hay")) {
+                const agent = await initializeAgentExecutorWithOptions(
+                    [],
+                    new ChatOpenAI({ temperature: 0 }),
+                    { agentType: "chat-zero-shot-react-description", verbose: true }
+                );
+
+                const result = await agent.call({
+                    input: message,
+                });
+                console.log("result", result.output);
+
+                return result.output;
+            }
+
             return response;
         } catch (error) {
             console.log("generateResponse", error);
