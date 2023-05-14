@@ -1,5 +1,5 @@
 import express from "express";
-import { inbound, outbound } from "./application";
+import { inbound, outbound, outboundModel } from "./application";
 
 const router = express.Router();
 
@@ -28,6 +28,15 @@ router.post('/trengo/webhook/outbound', async (req: any, res: any) => {
         message_id, ticket_id, contact_id, message, contact_name, contact_identifier
     })
     res.json(payload);
+});
+
+router.get('/message/:ticket', async (req: any, res: any) => {
+    const { ticket } = req.params;
+    const payload = await outboundModel({ ticket })
+
+    res
+        .status(payload?.code)
+        .json(payload);
 });
 
 export default router;

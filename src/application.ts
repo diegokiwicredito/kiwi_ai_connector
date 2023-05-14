@@ -1,6 +1,7 @@
 import { Trengo } from "./trengo";
 import { ChatGPT } from "./chatGPT";
 import { Kiwi } from "./kiwi";
+import { ResponseEndpoint } from './typings'
 
 export const inbound = async ({ ticket_id, message, contact_identifier }: any) => {
   try {
@@ -118,5 +119,27 @@ export const outbound = async ({ ticket_id, message, contact_identifier }: any) 
   } catch (error) {
     console.log("init", error);
     return false
+  }
+}
+
+export const outboundModel = async ({ ticket }: any) => {
+  try {
+    console.log('ticket', ticket)
+    const conversation = await Trengo.getMessage({ ticket_id: ticket  })
+    const lastMessage = conversation.data
+      .filter((item: any) => item.type == 'INBOUND')
+
+    return ({
+      code: 200,
+      success: true,
+      message: lastMessage.length ? lastMessage[0] : null
+    }) as ResponseEndpoint;
+  } catch (error) {
+    console.log("Error outboundModel: ", error);
+    return ({
+      code: 500,
+      success: false,
+      message: error,
+    } as ResponseEndpoint)
   }
 }
