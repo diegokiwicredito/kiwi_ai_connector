@@ -21,7 +21,6 @@ export const inbound = async ({ ticket_id, message, contact_identifier }: any) =
 
     return true;
   } catch (error) {
-    console.log("init", error);
     return false
   }
 }

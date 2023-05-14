@@ -51,7 +51,7 @@ export class ChatGPT {
         }
     }
 
-    public static async generateResponse({ message }: { message: string }) {
+    public static async generateResponse({ message }: any) {
         try {
             //postgresql://kiwi_master:gdh0ghy!cav0HRT7eub@kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com/kiwi_faq
             const datasource = new DataSource({
@@ -68,14 +68,14 @@ export class ChatGPT {
             });
 
             const chain = new SqlDatabaseChain({
-                llm: new OpenAI({ openAIApiKey: "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", temperature: 0 }),
+                llm: new OpenAI({ openAIApiKey: "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", temperature: 0 }),
                 database: db,
             });
 
             const response = await chain.run(message);
             return response;
         } catch (error) {
-
+            console.log("generateResponse", error);
         }
     }
 }

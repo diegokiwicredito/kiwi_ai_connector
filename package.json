@@ -19,6 +19,7 @@
     "langchain": "^0.0.75",
     "morgan": "^1.10.0",
     "openai": "^3.2.1",
+    "pg": "^8.10.0",
     "typeorm": "^0.3.16"
   },
   "devDependencies": {

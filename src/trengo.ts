@@ -5,7 +5,7 @@ export class Trengo {
     public static async sendMessage ({ ticket_id, message }: any) {
         const apiUrl = `https://app.trengo.com/api/v2/tickets/${ticket_id}/messages`;
         const apiKey = process.env.TRENGO_API_KEY;
-        console.log(process.env.TRENGO_API_KEY)
+        console.log(message)
     
         try {
             const response = await axios({
@@ -20,10 +20,9 @@ export class Trengo {
                 },
             });
     
-            console.log(`Mensaje enviado al ticket ${ticket_id}: ${message}`);
             return response.data;
-        } catch (error) {
-            console.error(`Error al enviar mensaje al ticket ${ticket_id}:`, error);
+        } catch (error: any) {
+            console.error(`Error al enviar mensaje al ticket ${ticket_id}:`, error.response.data);
             throw error;
         }
     }
