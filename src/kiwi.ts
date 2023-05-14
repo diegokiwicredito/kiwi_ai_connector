@@ -11,6 +11,18 @@ interface CreateMessage {
 }
 
 export class Kiwi {
+
+    public static async settings(ticket: any) {
+        try {
+            const is_channel_allowed = [1260399].includes(ticket.channel.id);
+
+            return is_channel_allowed;
+        } catch (error) {
+            console.log("settings", error);
+            return false;
+        }
+    }
+
     public static async getPayloadAndFormat() {
 
     }
