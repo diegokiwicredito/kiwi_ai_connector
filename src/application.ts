@@ -150,7 +150,7 @@ export const outboundModel = async ({ ticket }: any) => {
 export const getLoanproUser = async ({ userId, question }: any) => {
   try {
     const customer = await LoanProServices.getLoanproCustomer({
-      key: 'customId',
+      key: 'primaryPhone',
       value: userId
     })
 
