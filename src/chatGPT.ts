@@ -78,4 +78,32 @@ export class ChatGPT {
             console.log("generateResponse", error);
         }
     }
+
+    public static async modelLoanpro({ loan, question }: any) {
+        const configuration = new Configuration({
+            organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
+            apiKey: process.env.OPENAI_API_KEY,
+        });
+        const openai = new OpenAIApi(configuration);
+
+        try {
+            // Utilizar ChatGPT para generar una respuesta
+            const prompt = `
+                A partir del siguiente JSON de datos:
+                ${JSON.stringify(loan)}
+                Responde la siguiente pregunta: ${question}
+            `;
+            const response = await openai.createCompletion({
+                model: "text-davinci-003",
+                prompt: prompt,
+                max_tokens: 1080,
+                temperature: 0,
+            });
+            const answer = response?.data?.choices[0]?.text;
+            return answer;
+        } catch (error) {
+            console.log("categorize", error);
+            throw error;
+        }
+    }
 }

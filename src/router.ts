@@ -1,5 +1,5 @@
 import express from "express";
-import { inbound, outbound, outboundModel } from "./application";
+import { inbound, outbound, outboundModel, getLoanproUser } from "./application";
 
 const router = express.Router();
 
@@ -34,6 +34,19 @@ router.post('/trengo/webhook/outbound', async (req: any, res: any) => {
 router.get('/message/:ticket', async (req: any, res: any) => {
     const { ticket } = req.params;
     const payload = await outboundModel({ ticket })
+
+    res
+        .status(payload?.code)
+        .json(payload);
+});
+
+router.post('/loanpro/user/:id', async (req: any, res: any) => {
+    const { id } = req.params;
+    const { question } = req.body;
+    const payload = await getLoanproUser({ 
+        userId: id, 
+        question 
+    })
 
     res
         .status(payload?.code)
