@@ -16,7 +16,8 @@ router.post('/trengo/webhook/inbound', async (req: any, res: any) => {
     const payload = await inbound({
         message_id, ticket_id, contact_id, message, contact_name, contact_identifier
     })
-    res.json(payload);
+    
+    res.status(200).json(payload);
 });
 
 router.post('/trengo/webhook/outbound', async (req: any, res: any) => {

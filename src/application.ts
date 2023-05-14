@@ -5,6 +5,29 @@ import { Kiwi } from "./kiwi";
 export const inbound = async ({ ticket_id, message, contact_identifier }: any) => {
   try {
     // Utilizar Trengo API para enviar la respuesta a través de un chat
+    if (ticket_id != '668234704') {
+      return false;
+    }
+
+    const response = await ChatGPT.generateResponse({
+      message
+    })
+
+    await Trengo.sendMessage({ 
+      ticket_id: "668234704", 
+      message: response
+    })
+
+    return true;
+  } catch (error) {
+    console.log("init", error);
+    return false
+  }
+}
+
+export const inbound2 = async ({ ticket_id, message, contact_identifier }: any) => {
+  try {
+    // Utilizar Trengo API para enviar la respuesta a través de un chat
 
     const summary = await ChatGPT.categorize({
       message

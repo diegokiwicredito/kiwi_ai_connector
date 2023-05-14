@@ -1,4 +1,8 @@
 import { Configuration, OpenAIApi } from "openai";
+import { DataSource } from "typeorm";
+import { OpenAI } from "langchain/llms/openai";
+import { SqlDatabase } from "langchain/sql_db";
+import { SqlDatabaseChain } from "langchain/chains";
 
 export class ChatGPT {
     // Método para enviar mensajes
@@ -7,9 +11,9 @@ export class ChatGPT {
         const configuration = new Configuration({
             organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
             apiKey: process.env.OPENAI_API_KEY,
-          });
-          console.log("OPENAI_API_KEY", process.env.OPENAI_API_KEY);
-          const openai = new OpenAIApi(configuration);
+        });
+        console.log("OPENAI_API_KEY", process.env.OPENAI_API_KEY);
+        const openai = new OpenAIApi(configuration);
 
         try {
             // Utilizar ChatGPT para generar una respuesta
@@ -47,9 +51,29 @@ export class ChatGPT {
         }
     }
 
-    public static async generateResponse({}) {
+    public static async generateResponse({ message }: { message: string }) {
         try {
+            //postgresql://kiwi_master:gdh0ghy!cav0HRT7eub@kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com/kiwi_faq
+            const datasource = new DataSource({
+                type: "postgres",
+                host: "kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com",
+                port: 5432,
+                username: "kiwi_master",
+                password: "gdh0ghy!cav0HRT7eub",
+                database: "kiwi_faq",
+            });
 
+            const db = await SqlDatabase.fromDataSourceParams({
+                appDataSource: datasource,
+            });
+
+            const chain = new SqlDatabaseChain({
+                llm: new OpenAI({ openAIApiKey: "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", temperature: 0 }),
+                database: db,
+            });
+
+            const response = await chain.run(message);
+            return response;
         } catch (error) {
 
         }
