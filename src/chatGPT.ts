@@ -5,6 +5,7 @@ import { SqlDatabase } from "langchain/sql_db";
 import { SqlDatabaseChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
+import { LoanProServices } from "./loanpro";
 
 export class ChatGPT {
     // Método para enviar mensajes
@@ -53,7 +54,10 @@ export class ChatGPT {
         }
     }
 
-    public static async generateResponse({ message }: any) {
+    public static async generateResponse({ 
+        message,
+        contactPhone
+    }: any) {
         try {
             //postgresql://kiwi_master:gdh0ghy!cav0HRT7eub@kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com/kiwi_faq
             const datasource = new DataSource({
@@ -75,8 +79,27 @@ export class ChatGPT {
             });
 
             const response = await chain.run(message);
+            // if (response.includes("No hay") && contactPhone) {
+            if (contactPhone) {
+                const customer = await LoanProServices.getLoanproCustomer({
+                    key: 'primaryPhone',
+                    value: contactPhone
+                })
 
-            if (response.includes("No hay")) {
+                const { id: customerId } = customer || {}
+
+                if (!customerId) return "User not found in lonapro"
+
+                const loan = await LoanProServices.getLoan(customerId)
+                if (!loan) return "Loan not found in lonapro"
+
+                const gptResponse = await this.modelLoanpro({ 
+                    loan, 
+                    question: message 
+                })
+
+                return gptResponse
+            } else if (response.includes("No hay")) {
                 const agent = await initializeAgentExecutorWithOptions(
                     [],
                     new ChatOpenAI({ temperature: 0 }),

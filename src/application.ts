@@ -7,21 +7,28 @@ import { ResponseEndpoint } from './typings'
 export const inbound = async ({ ticket_id, message }: any) => {
   try {
     const ticket = await Trengo.getTicket({ ticket_id });
-
+    // console.log('ticket', ticket)
     const is_allow = Kiwi.settings(ticket);
 
     if (!is_allow) {
       return false;
     }
 
-    const response = await ChatGPT.generateResponse({
-      message
-    })
+    const contactPhone = ticket?.contact?.custom_field_data?.['Contact phone'] || null
+    console.log('contactPhone', contactPhone)
 
-    await Trengo.sendMessage({ 
-      ticket_id, 
-      message: response
+    console.log('message', message)
+    const response = await ChatGPT.generateResponse({
+      message,
+      contactPhone
     })
+    console.log('response', response)
+    if(contactPhone === '7875152419') {
+      await Trengo.sendMessage({ 
+        ticket_id, 
+        message: response
+      })
+    }
 
     return true;
   } catch (error) {
