@@ -9,7 +9,6 @@ export const inbound = async ({ ticket_id, message }: any) => {
     const ticket = await Trengo.getTicket({ ticket_id });
 
     const is_allow = Kiwi.settings(ticket);
-    console.log('is_allow', is_allow)
 
     if (!is_allow) {
       return false;
@@ -23,10 +22,10 @@ export const inbound = async ({ ticket_id, message }: any) => {
     })
 
     console.log('RESPONSE: ', response)
-    // await Trengo.sendMessage({
-    //   ticket_id,
-    //   message: response
-    // })
+    await Trengo.sendMessage({
+      ticket_id,
+      message: response
+    })
 
     return true;
   } catch (error) {

@@ -6,7 +6,7 @@ import { SqlDatabaseChain } from "langchain/chains";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { LoanProServices } from "./loanpro";
-
+import { PromptTemplate } from "langchain/prompts";
 export class ChatGPT {
     // Método para enviar mensajes
     public static async categorize({ message }: any) {
@@ -15,7 +15,7 @@ export class ChatGPT {
             organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
             apiKey: process.env.OPENAI_API_KEY,
         });
-        
+
         const openai = new OpenAIApi(configuration);
 
         try {
@@ -54,12 +54,11 @@ export class ChatGPT {
         }
     }
 
-    public static async generateResponse({ 
+    public static async generateResponse({
         message,
         contactPhone
     }: any) {
         try {
-            //postgresql://kiwi_master:gdh0ghy!cav0HRT7eub@kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com/kiwi_faq
             const datasource = new DataSource({
                 type: "postgres",
                 host: "kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com",
@@ -75,75 +74,74 @@ export class ChatGPT {
 
             const chain = new SqlDatabaseChain({
                 llm: new OpenAI({ temperature: 0 }),
-                database: db,
+                database: db
             });
 
             const response = await chain.run(message);
-            // if (response.includes("No hay") && contactPhone) {
-            if (contactPhone) {
-                const customer = await LoanProServices.getLoanproCustomer({
-                    key: 'primaryPhone',
-                    value: contactPhone
-                })
 
-                const { id: customerId } = customer || {}
+            const answer = await this.createCompletion(`Si en esta frase "${response}" considera que no enconro la respuesta, retornar: false, de lo contrario retornar: "${response}"`);
 
-                if (!customerId) return "User not found in lonapro"
-
-                const loan = await LoanProServices.getLoan(customerId)
-                if (!loan) return "Loan not found in lonapro"
-
-                const gptResponse = await this.modelLoanpro({ 
-                    loan, 
-                    question: message 
-                })
-
-                return gptResponse
-            } else if (response.includes("No hay")) {
-                const agent = await initializeAgentExecutorWithOptions(
-                    [],
-                    new ChatOpenAI({ temperature: 0 }),
-                    { agentType: "chat-zero-shot-react-description", verbose: true }
-                );
-
-                const result = await agent.call({
-                    input: message,
-                });
-
-                return result.output;
+            if (answer.includes("false")) {
+                return answer;
             }
+            console.log("HERE", answer);
 
-            return response;
+            const customer = await LoanProServices.getLoanproCustomer({
+                key: 'primaryPhone',
+                value: contactPhone
+            })
+
+            const { id: customerId } = customer || {}
+
+            if (!customerId) return "User not found in lonapro"
+
+            const loan = await LoanProServices.getLoan(customerId)
+            if (!loan) return "Loan not found in lonapro"
+
+            const gptResponse = await this.modelLoanpro({
+                loan,
+                question: message
+            })
+
+            return gptResponse;
         } catch (error) {
             console.log("generateResponse", error);
         }
     }
 
     public static async modelLoanpro({ loan, question }: any) {
-        const configuration = new Configuration({
-            organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
-            apiKey: process.env.OPENAI_API_KEY,
-        });
-        const openai = new OpenAIApi(configuration);
-
         try {
             // Utilizar ChatGPT para generar una respuesta
-            const prompt = `
+            const response = await this.createCompletion(`
                 A partir del siguiente JSON de datos:
                 ${JSON.stringify(loan)}
                 Responde la siguiente pregunta: ${question} y omitir la fuente de los datos en la respuesta
-            `;
+            `);
+
+            return response;
+        } catch (error) {
+            console.log("modelLoanpro", error);
+            throw error;
+        }
+    }
+
+    public static createCompletion = async (prompt: string) => {
+        try {
+            const configuration = new Configuration({
+                organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
+                apiKey: process.env.OPENAI_API_KEY,
+            });
+            const openai = new OpenAIApi(configuration);
+
             const response = await openai.createCompletion({
                 model: "text-davinci-003",
                 prompt: prompt,
                 max_tokens: 1080,
                 temperature: 0,
             });
-            const answer = response?.data?.choices[0]?.text;
-            return answer;
+            return response?.data?.choices[0]?.text || "false";
         } catch (error) {
-            console.log("categorize", error);
-            throw error;
+            return "false";
         }
     }
 }
