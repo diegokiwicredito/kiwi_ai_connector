@@ -3,10 +3,17 @@ import { DataSource } from "typeorm";
 import { OpenAI } from "langchain/llms/openai";
 import { SqlDatabase } from "langchain/sql_db";
 import { SqlDatabaseChain } from "langchain/chains";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { initializeAgentExecutorWithOptions } from "langchain/agents";
 import { LoanProServices } from "./loanpro";
 import { PromptTemplate } from "langchain/prompts";
+
+const datasource = new DataSource({
+    type: "postgres",
+    host: "kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com",
+    port: 5432,
+    username: "kiwi_master",
+    password: "gdh0ghy!cav0HRT7eub",
+    database: "kiwi_faq",
+});
 export class ChatGPT {
     // Método para enviar mensajes
     public static async categorize({ message }: any) {
@@ -59,14 +66,6 @@ export class ChatGPT {
         contactPhone
     }: any) {
         try {
-            const datasource = new DataSource({
-                type: "postgres",
-                host: "kiwi-sandbox.calllygog8pr.us-east-1.rds.amazonaws.com",
-                port: 5432,
-                username: "kiwi_master",
-                password: "gdh0ghy!cav0HRT7eub",
-                database: "kiwi_faq",
-            });
 
             const db = await SqlDatabase.fromDataSourceParams({
                 appDataSource: datasource,
@@ -79,7 +78,7 @@ export class ChatGPT {
 
             const response = await chain.run(message);
 
-            const answer = await this.createCompletion(`Si en esta frase "${response}" considera que no enconro la respuesta, retornar: false, de lo contrario retornar: "${response}"`);
+            const answer = await this.createCompletion(`Si en esta frase "${response}" considera que no encontro la respuesta, retornar: false, de lo contrario retornar: "${response}"`);
 
             if (!answer.includes("false")) {
                 return answer;
