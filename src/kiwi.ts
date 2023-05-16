@@ -12,7 +12,7 @@ interface CreateMessage {
 
 export class Kiwi {
 
-    public static async settings(ticket: any) {
+    public static settings(ticket: any) {
         try {
             const is_channel_allowed = [1260399].includes(ticket.channel.id);
 
