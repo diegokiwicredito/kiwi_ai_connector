@@ -79,10 +79,22 @@ export class ChatGPT {
 
             const response = await chain.run(message);
 
-            const answer = await this.createCompletion(`Si en esta frase "${response}" considera que no enconro la respuesta, retornar: false, de lo contrario retornar: "${response}"`);
+            const answer = await this.createCompletion(`
+            Si en esta frase "${response}" considera que no encontro resultados para la pregunta: "${message}", retornar: false, 
+            de lo contrario retornar: "${response}"`);
 
+            console.log("answer", answer)
             if (!answer.includes("false")) {
                 return answer;
+            }
+            
+            const validateLoan = await this.createCompletion(`
+            Si en esta frase "${message}" están solicitando información respecto al préstamo del usuario, retorna: true,
+            o si el usuario está agradeciendo, responder con: "Esperamos haber resuelto su solicitud",
+            de lo contrario retorna una respuesta adecuada y amable como si fueras un agente de servicio al cliente`);
+
+            if(!validateLoan.includes("True") && !validateLoan.includes("true")) {
+                return validateLoan;
             }
 
             const customer = await LoanProServices.getLoanproCustomer({

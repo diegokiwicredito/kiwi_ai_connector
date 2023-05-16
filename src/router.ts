@@ -1,5 +1,5 @@
 import express from "express";
-import { inbound, outboundModel, getLoanproUser } from "./application";
+import { inbound, outboundModel, getLoanproUser, getResponse } from "./application";
 
 const router = express.Router();
 
@@ -32,9 +32,9 @@ router.get('/message/:ticket', async (req: any, res: any) => {
 router.post('/loanpro/user/:id', async (req: any, res: any) => {
     const { id } = req.params;
     const { question } = req.body;
-    const payload = await getLoanproUser({ 
-        userId: id, 
-        question 
+    const payload = await getResponse({ 
+        phone: id, 
+        message: question 
     })
 
     res

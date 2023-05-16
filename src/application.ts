@@ -95,3 +95,27 @@ export const getLoanproUser = async ({ userId, question }: any) => {
     } as ResponseEndpoint)
   }
 }
+
+export const getResponse = async ({ phone, message }: any) => {
+  try {
+    const response = await ChatGPT.generateResponse({
+      message,
+      contactPhone: phone
+    })
+
+    console.log('RESPONSE: ', response)
+
+    return ({
+      code: 200,
+      success: true,
+      message: response
+    }) as ResponseEndpoint;
+  } catch (error) {
+    console.log("Error getResponse: ", error);
+    return ({
+      code: 500,
+      success: false,
+      message: error,
+    } as ResponseEndpoint)
+  }
+}
