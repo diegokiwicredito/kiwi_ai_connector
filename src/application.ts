@@ -9,6 +9,7 @@ export const inbound = async ({ ticket_id, message }: any) => {
     const ticket = await Trengo.getTicket({ ticket_id });
 
     const is_allow = Kiwi.settings(ticket);
+    console.log('is_allow', is_allow)
 
     if (!is_allow) {
       return false;
