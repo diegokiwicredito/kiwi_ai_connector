@@ -15,7 +15,7 @@ export class ChatGPT {
             organization: "org-mkrDVf0TnvPpGtcMg2IaeRMy",
             apiKey: process.env.OPENAI_API_KEY,
         });
-        console.log("OPENAI_API_KEY", process.env.OPENAI_API_KEY);
+        
         const openai = new OpenAIApi(configuration);
 
         try {
@@ -109,7 +109,6 @@ export class ChatGPT {
                 const result = await agent.call({
                     input: message,
                 });
-                console.log("result", result.output);
 
                 return result.output;
             }

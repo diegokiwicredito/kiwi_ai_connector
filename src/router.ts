@@ -10,6 +10,7 @@ router.get('/', async (req: any, res: any) => {
 });
 
 router.post('/trengo/webhook/inbound', async (req: any, res: any) => {
+    console.log("body", req.body);
     const { message_id, ticket_id, contact_id, message, contact_name, contact_identifier } = req.body;
 
     const payload = await inbound({
@@ -20,7 +21,6 @@ router.post('/trengo/webhook/inbound', async (req: any, res: any) => {
 });
 
 router.post('/trengo/webhook/outbound', async (req: any, res: any) => {
-    console.log("body", req.body);
     const { message_id, ticket_id, contact_id, message, contact_name, contact_identifier } = req.body;
 
     const payload = await outbound({
