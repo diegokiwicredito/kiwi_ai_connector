@@ -14,19 +14,20 @@ export const inbound = async ({ ticket_id, message }: any) => {
       return false;
     }
 
-    const contactPhone = ticket?.contact?.custom_field_data?.['Contact phone'] || null
+    const phone = ticket?.custom_data?.phone || null
+    const shortcut = ticket?.custom_data?.shortcut || null
 
-    if (message == contactPhone) {
+    if (message == phone) {
       return false;
     }
 
-    // if (message == ticket?.contact?.custom_field_data?.['Contact phone']) {
-    //   return false;
-    // }
+    if (message == shortcut) {
+      return false;
+    }
 
     const response = await ChatGPT.generateResponse({
       message,
-      contactPhone
+      contactPhone: phone
     })
 
     console.log('RESPONSE: ', response)
