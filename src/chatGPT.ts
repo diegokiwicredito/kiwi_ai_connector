@@ -81,10 +81,9 @@ export class ChatGPT {
 
             const answer = await this.createCompletion(`Si en esta frase "${response}" considera que no enconro la respuesta, retornar: false, de lo contrario retornar: "${response}"`);
 
-            if (answer.includes("false")) {
+            if (!answer.includes("false")) {
                 return answer;
             }
-            console.log("HERE", answer);
 
             const customer = await LoanProServices.getLoanproCustomer({
                 key: 'primaryPhone',
